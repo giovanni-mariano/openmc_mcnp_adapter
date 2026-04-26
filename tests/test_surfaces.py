@@ -323,6 +323,13 @@ def test_torus(mnemonic, expected_type):
         assert getattr(surf, name) == approx(val)
 
 
+@mark.parametrize("mnemonic", ["tx", "ty", "tz"])
+def test_torus_degenerate_sphere(mnemonic):
+    surf = convert_surface(mnemonic, (1.0, 2.0, 3.0, 0.0, 0.5, 0.5))
+    assert isinstance(surf, openmc.Sphere)
+    assert (surf.x0, surf.y0, surf.z0, surf.r) == approx((1.0, 2.0, 3.0, 0.5))
+
+
 @mark.parametrize(
     "mnemonic, params, expected_type, attr, value",
     [
