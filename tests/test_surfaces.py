@@ -7,7 +7,7 @@ from openmc.model.surface_composite import OrthogonalBox, \
     RectangularParallelepiped, RightCircularCylinder, ConicalFrustum, \
     XConeOneSided, YConeOneSided, ZConeOneSided
 from openmc_mcnp_adapter import mcnp_str_to_model, get_openmc_surfaces
-from pytest import approx, mark, raises
+from pytest import approx, mark, raises, warns
 
 
 def convert_surface(mnemonic: str, params: Sequence[float]) -> openmc.Surface:
@@ -325,7 +325,8 @@ def test_torus(mnemonic, expected_type):
 
 @mark.parametrize("mnemonic", ["tx", "ty", "tz"])
 def test_torus_degenerate_sphere(mnemonic):
-    surf = convert_surface(mnemonic, (1.0, 2.0, 3.0, 0.0, 0.5, 0.5))
+    with warns(UserWarning, match="Degenerate torus"):
+        surf = convert_surface(mnemonic, (1.0, 2.0, 3.0, 0.0, 0.5, 0.5))
     assert isinstance(surf, openmc.Sphere)
     assert (surf.x0, surf.y0, surf.z0, surf.r) == approx((1.0, 2.0, 3.0, 0.5))
 

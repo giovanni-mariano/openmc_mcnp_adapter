@@ -303,7 +303,11 @@ def get_openmc_surfaces(surfaces, data):
                                   f=f, g=g, h=h, j=j, k=k)
         elif s['mnemonic'] in ('tx', 'ty', 'tz'):
             x0, y0, z0, a, b, c = coeffs
-            if a == 0 and b == c:
+            if isclose(a, 0.0, abs_tol=1e-12) and isclose(b, c):
+                warnings.warn(
+                    f"Degenerate torus surface {s['id']} (A=0, B=C) converted "
+                    f"to an openmc.Sphere of radius {b}."
+                )
                 surf = openmc.Sphere(surface_id=s['id'], x0=x0, y0=y0, z0=z0, r=b)
             else:
                 cls = getattr(openmc, f"{s['mnemonic'][1].upper()}Torus")
